@@ -1,0 +1,8 @@
+services:
+  app-inventaire:
+    build: .
+    ports:
+      - "8888:80"
+    volumes:
+      - .:/var/www/html
+    restart: always

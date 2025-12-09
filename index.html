@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaire TGCF 2025</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-body-tertiary">
+
+<nav class="navbar navbar-custom sticky-top">
+    <div class="container">
+        <span class="logo-text">INVENTAIRE TGCF 2025</span>
+        <div class="d-flex align-items-center gap-3">
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+                🌙
+            </button>
+            <span id="nav-user-badge" class="user-badge hidden">
+                <span id="nav-username"></span>
+            </span>
+            <button id="btn-logout" onclick="logoutConfirm()" class="logout-btn hidden">
+                Quitter
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div id="screen-login" class="login-container">
+    <div class="login-card">
+        <h2 class="login-title">Bienvenue</h2>
+        <p class="login-subtitle">Scannez votre badge utilisateur pour commencer</p>
+        <input type="text" id="input-user" class="form-control input-modern" placeholder="U..." autofocus autocomplete="off">
+        <div id="login-error" class="text-danger mt-3 text-center small hidden">
+            Badge non reconnu
+        </div>
+    </div>
+</div>
+
+<div id="screen-inventory" class="container py-4 hidden">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="scan-card">
+                <div class="scan-label">Scanner un produit</div>
+                <input type="text" id="input-scan" class="scan-input" placeholder="Code barre..." autocomplete="off">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="products-card">
+                <div class="products-header">
+                    <h5 class="products-title">Produits scannés</h5>
+                    <span class="count-badge"><span id="count-total">0</span></span>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="table table-modern">
+                        <thead>
+                            <tr>
+                                <th>Code produit</th>
+                                <th class="text-center">Quantité</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scan-list"></tbody>
+                    </table>
+                    <div id="empty-state" class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div>Aucun produit scanné</div>
+                    </div>
+                </div>
+
+                <button onclick="finishInventory()" class="validate-btn">
+                    VALIDER L'INVENTAIRE
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-qty" id="modalQty" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="modal-qty-label">Quantité pour</div>
+                <div class="modal-qty-code" id="modal-code-display"></div>
+                
+                <div class="qty-control">
+                    <button class="qty-btn" type="button" onclick="adjustQty(-1)">−</button>
+                    <input type="number" id="input-qty" class="form-control qty-input" value="1" min="1">
+                    <button class="qty-btn" type="button" onclick="adjustQty(1)">+</button>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" onclick="cancelQty()" class="cancel-btn">ANNULER</button>
+                    <button type="button" onclick="confirmQty()" class="add-btn">AJOUTER</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

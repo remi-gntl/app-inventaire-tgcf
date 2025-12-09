@@ -1,0 +1,508 @@
+:root {
+    --main-red: #e93a35;
+    --main-red-hover: #c9302c;
+    --main-red-light: rgba(233, 58, 53, 0.1);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+    --radius-lg: 16px;
+    --radius-md: 12px;
+}
+
+[data-bs-theme="dark"] {
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    transition: background-color 0.3s ease;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar-custom {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 1rem 0;
+}
+
+[data-bs-theme="dark"] .navbar-custom {
+    background: rgba(30, 30, 35, 0.95) !important;
+    border-bottom-color: rgba(255,255,255,0.08);
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--main-red) 0%, #ff6b6b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.user-badge {
+    background: var(--main-red-light);
+    color: var(--main-red);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+}
+
+.theme-toggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+[data-bs-theme="dark"] .theme-toggle {
+    background: rgba(255,255,255,0.1);
+}
+
+.theme-toggle:hover {
+    background: var(--main-red-light);
+}
+
+.logout-btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    border: 2px solid rgba(0,0,0,0.1);
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.15);
+}
+
+[data-bs-theme="dark"] .logout-btn {
+    border-color: rgba(255,255,255,0.15);
+}
+
+[data-bs-theme="dark"] .logout-btn:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.25);
+}
+
+/* LOGIN */
+.login-container {
+    min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.login-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 3rem 2.5rem;
+    max-width: 450px;
+    width: 100%;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+[data-bs-theme="dark"] .login-card {
+    background: #1e1e23;
+    border-color: rgba(255,255,255,0.08);
+}
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--main-red);
+}
+
+.login-subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+.input-modern {
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s ease;
+    letter-spacing: 2px;
+}
+
+.input-modern:focus {
+    border-color: var(--main-red);
+    box-shadow: 0 0 0 4px var(--main-red-light);
+    outline: none;
+}
+
+[data-bs-theme="dark"] .input-modern {
+    background: #2b2b30;
+    border-color: rgba(255,255,255,0.15);
+    color: white;
+}
+
+/* SCAN CARD */
+.scan-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    border: 2px solid var(--main-red);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-bs-theme="dark"] .scan-card {
+    background: #1e1e23;
+    border-color: var(--main-red);
+}
+
+.scan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--main-red), #ff6b6b);
+}
+
+.scan-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6c757d;
+    margin-bottom: 0.75rem;
+}
+
+.scan-input {
+    border: none;
+    background: transparent;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 0.5rem 0;
+    width: 100%;
+}
+
+.scan-input:focus {
+    outline: none;
+}
+
+/* PRODUCTS TABLE */
+.products-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+[data-bs-theme="dark"] .products-card {
+    background: #1e1e23;
+    border-color: rgba(255,255,255,0.08);
+}
+
+.products-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-bs-theme="dark"] .products-header {
+    border-bottom-color: rgba(255,255,255,0.08);
+}
+
+.products-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.count-badge {
+    background: var(--main-red-light);
+    color: var(--main-red);
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.table-wrapper {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.table-modern {
+    margin: 0;
+}
+
+.table-modern thead th {
+    background: rgba(0,0,0,0.02);
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+[data-bs-theme="dark"] .table-modern thead th {
+    background: rgba(255,255,255,0.03);
+}
+
+.table-modern tbody tr {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: background 0.2s ease;
+}
+
+[data-bs-theme="dark"] .table-modern tbody tr {
+    border-bottom-color: rgba(255,255,255,0.05);
+}
+
+.table-modern tbody tr:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+[data-bs-theme="dark"] .table-modern tbody tr:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.table-modern tbody td {
+    padding: 1rem 1.5rem;
+    border: none;
+    vertical-align: middle;
+}
+
+.product-code {
+    font-weight: 600;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.product-qty {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--main-red);
+}
+
+.remove-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 2px solid #dc3545;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.remove-btn:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #adb5bd;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+/* VALIDATE BUTTON */
+.validate-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 1.2rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    width: calc(100% - 3rem);
+    margin: 1.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.validate-btn:hover {
+    background: #218838;
+}
+
+.validate-btn:active {
+    transform: scale(0.98);
+}
+
+/* MODAL QTY */
+.modal-qty .modal-content {
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+
+.modal-qty-header {
+    padding: 1.5rem;
+    text-align: center;
+    border: none;
+}
+
+.modal-qty-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.modal-qty-code {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--main-red);
+    word-break: break-all;
+    margin-bottom: 1.5rem;
+}
+
+.qty-control {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.qty-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(0,0,0,0.1);
+    background: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-bs-theme="dark"] .qty-btn {
+    background: #2b2b30;
+    border-color: rgba(255,255,255,0.15);
+}
+
+.qty-btn:hover {
+    background: var(--main-red-light);
+    border-color: var(--main-red);
+    color: var(--main-red);
+}
+
+.qty-input {
+    flex: 1;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.5rem;
+}
+
+.qty-input:focus {
+    border-color: var(--main-red);
+    outline: none;
+    box-shadow: 0 0 0 4px var(--main-red-light);
+}
+
+[data-bs-theme="dark"] .qty-input {
+    background: #2b2b30;
+    border-color: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.add-btn {
+    background: var(--main-red);
+    color: white;
+    border: none;
+    padding: 0.9rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+    background: var(--main-red-hover);
+}
+
+/* UTILITIES */
+.hidden {
+    display: none !important;
+}
+
+/* SWEETALERT CUSTOM */
+.swal2-confirm {
+    background: var(--main-red) !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .products-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .table-modern thead th,
+    .table-modern tbody td {
+        padding: 0.75rem 1rem;
+    }
+
+    .validate-btn {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+}
