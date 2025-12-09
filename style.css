@@ -474,6 +474,41 @@ body {
     background: var(--main-red-hover);
 }
 
+.cancel-btn {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 0.9rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background-color: #e9ecef;
+    color: #495057;
+    border-color: #ced4da;
+}
+
+[data-bs-theme="dark"] .cancel-btn {
+    background-color: #2b2b30;
+    border-color: rgba(255,255,255,0.15);
+    color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .cancel-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.d-flex.gap-2 > button {
+    flex: 1;
+}
+
 /* UTILITIES */
 .hidden {
     display: none !important;

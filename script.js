@@ -96,8 +96,15 @@ function confirmQty() {
 }
 
 function cancelQty() {
+    inputQty.value = "1";
+    currentScan = "";
+    
     qtyModal.hide();
-    setTimeout(() => inputScan.focus(), 200);
+    
+    setTimeout(() => {
+        inputScan.value = "";
+        inputScan.focus();
+    }, 200);
 }
 
 function updateTable() {
