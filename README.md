@@ -6,14 +6,14 @@ Une application web ultra-légère développée en **PHP 8.3 (Native)** et **Jav
 
 ## ✨ Fonctionnalités principales
 
-🚀 **Interface "Single Page"** ultra-rapide sans rechargement de page 
-🆔 **Authentification instantanée** par scan de badge utilisateur (Format U...) 
-📦 **Saisie "Scan & Pick"** : détection automatique et ouverture de modale 
-🔢 **Saisie des quantités optimisée** (Clavier ou boutons tactiles +/-) 
-❌ **Gestion des erreurs** : annulation de scan et suppression de lignes 
-🌗 **Mode Sombre** (Dark Mode) pour économie de batterie et confort visuel 
-✅ **Validation par lots** vers SQL Server (Transactions sécurisées) 
-🔔 **Notifications** visuelles et sonores claires (SweetAlert2) 
+🚀 **Interface "Single Page" ultra-rapide sans rechargement de page**  
+🆔 **Authentification instantanée par scan de badge utilisateur (Format U...)**  
+📦 **Saisie "Scan & Pick" : détection automatique et ouverture de modale**  
+🔢 **Saisie des quantités optimisée (Clavier ou boutons tactiles +/-)**  
+❌ **Gestion des erreurs : annulation de scan et suppression de lignes**  
+🌗 **Mode Sombre (Dark Mode) pour économie de batterie et confort visuel**   
+✅ **Validation par lots vers SQL Server (Transactions sécurisées)**  
+🔔 **Notifications visuelles et sonores claires (SweetAlert2)**  
 
 ---
 
