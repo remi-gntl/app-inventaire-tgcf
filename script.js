@@ -1,45 +1,68 @@
+// --- VARIABLES ---
 let currentUser = "";
 let currentScan = "";
-let scansBuffer = []; 
+let historyLog = []; 
 
 const qtyModal = new bootstrap.Modal(document.getElementById('modalQty'));
+
 const inputUser = document.getElementById('input-user');
 const inputScan = document.getElementById('input-scan');
 const inputQty = document.getElementById('input-qty');
 const scanList = document.getElementById('scan-list');
 const emptyState = document.getElementById('empty-state');
+const toast = document.getElementById('custom-toast');
 
-// THEME
-const storedTheme = localStorage.getItem('theme') || 'light';
-document.documentElement.setAttribute('data-bs-theme', storedTheme);
-updateThemeIcon(storedTheme);
+// Modales personnalisées
+const logoutModal = document.getElementById('modal-logout');
+const logoutBackdrop = document.getElementById('modal-logout-backdrop');
+
+// --- THEME ---
+// Stockage en variable JS au lieu de localStorage pour compatibilité
+let currentTheme = 'light';
+try {
+    const stored = localStorage.getItem('theme');
+    if (stored) currentTheme = stored;
+} catch(e) {
+    // localStorage non supporté, on garde 'light'
+}
+
+document.documentElement.setAttribute('data-bs-theme', currentTheme);
+updateThemeIcon(currentTheme);
 
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    const theme = document.documentElement.getAttribute('data-bs-theme');
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    currentTheme = newTheme;
     document.documentElement.setAttribute('data-bs-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    try {
+        localStorage.setItem('theme', newTheme);
+    } catch(e) {
+        // Pas grave si localStorage ne fonctionne pas
+    }
     updateThemeIcon(newTheme);
 }
 
 function updateThemeIcon(theme) {
     const btn = document.getElementById('theme-btn');
-    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    if(btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
-// LOGIN
+// --- LOGIN ---
 inputUser.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        let val = this.value.trim().toUpperCase();
-        if (val.startsWith('U') && val.length > 1) {
-            loginSuccess(val);
-            this.value = '';
-        } else {
-            document.getElementById('login-error').classList.remove('hidden');
-            this.value = '';
-        }
-    }
+    if (e.key === 'Enter') triggerLogin();
 });
+
+function triggerLogin() {
+    let val = inputUser.value.trim().toUpperCase();
+    if (val.startsWith('U') && val.length > 1) {
+        loginSuccess(val);
+        inputUser.value = '';
+    } else {
+        document.getElementById('login-error').classList.remove('hidden');
+        inputUser.value = '';
+        inputUser.focus();
+    }
+}
 
 function loginSuccess(user) {
     currentUser = user;
@@ -51,26 +74,34 @@ function loginSuccess(user) {
     document.getElementById('screen-inventory').classList.remove('hidden');
     document.getElementById('login-error').classList.add('hidden');
 
-    setTimeout(() => inputScan.focus(), 200);
+    setTimeout(function() {
+        inputScan.focus();
+    }, 200);
 }
 
-// INVENTAIRE
+// --- INVENTAIRE ---
+// Gestion Touche Entrée
 inputScan.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        let val = this.value.trim();
-        if (val !== "") {
-            currentScan = val;
-            this.value = ''; 
-            openQtyModal();
-        }
-    }
+    if (e.key === 'Enter') triggerScan();
 });
+
+function triggerScan() {
+    let val = inputScan.value.trim();
+    if (val !== "") {
+        currentScan = val;
+        inputScan.value = ''; 
+        openQtyModal();
+    }
+}
 
 function openQtyModal() {
     document.getElementById('modal-code-display').innerText = currentScan;
     inputQty.value = "1"; 
     qtyModal.show();
-    setTimeout(() => inputQty.focus(), 400); 
+    setTimeout(function() {
+        inputQty.focus();
+        inputQty.select();
+    }, 400); 
 }
 
 function adjustQty(delta) {
@@ -82,161 +113,123 @@ function adjustQty(delta) {
 }
 
 inputQty.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') confirmQty();
+    if (e.key === 'Enter') confirmAndSend();
 });
 
-function confirmQty() {
+// --- ENVOI DIRECT ---
+function confirmAndSend() {
     let qty = parseInt(inputQty.value);
     if (isNaN(qty) || qty < 1) return; 
 
-    scansBuffer.unshift({ code: currentScan, qty: qty });
-    updateTable();
     qtyModal.hide();
-    setTimeout(() => inputScan.focus(), 200);
+
+    const dataToSend = {
+        user: currentUser,
+        scans: [
+            { code: currentScan, qty: qty }
+        ]
+    };
+
+    // Appel API
+    fetch('api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (data.status === 'success') {
+            addToHistory(currentScan, qty);
+            showToastSuccess();
+        } else {
+            alert("❌ Erreur enregistrement : " + data.message);
+        }
+    })
+    .catch(function(err) {
+        alert("❌ Erreur réseau : " + err);
+    })
+    .finally(function() {
+        // Reset pour le prochain scan
+        currentScan = "";
+        setTimeout(function() {
+            inputScan.value = "";
+            inputScan.focus();
+        }, 200);
+    });
 }
 
 function cancelQty() {
     inputQty.value = "1";
-    currentScan = "";
-    
+    currentScan = ""; 
     qtyModal.hide();
-    
-    setTimeout(() => {
-        inputScan.value = "";
+    setTimeout(function() {
+        inputScan.value = ""; 
         inputScan.focus();
     }, 200);
 }
 
-function updateTable() {
+// --- GESTION HISTORIQUE VISUEL ---
+function addToHistory(code, qty) {
+    historyLog.unshift({ code: code, qty: qty });
+    
+    // On garde que les 50 derniers pour pas surcharger le DOM
+    if (historyLog.length > 50) historyLog.pop();
+
+    renderTable();
+}
+
+function renderTable() {
     scanList.innerHTML = '';
     
-    if(scansBuffer.length > 0) {
+    if(historyLog.length > 0) {
         emptyState.classList.add('hidden');
     } else {
         emptyState.classList.remove('hidden');
     }
 
-    scansBuffer.forEach((item, index) => {
-        let row = `<tr>
-            <td class="product-code">${item.code}</td>
-            <td class="text-center product-qty">${item.qty}</td>
-            <td class="text-center">
-                <button class="remove-btn" onclick="removeScan(${index})">×</button>
-            </td>
-        </tr>`;
+    historyLog.forEach(function(item) {
+        let row = '<tr>' +
+            '<td class="product-code text-break">' + item.code + '</td>' +
+            '<td class="text-end product-qty">' + item.qty + '</td>' +
+            '</tr>';
         scanList.innerHTML += row;
     });
     
-    document.getElementById('count-total').innerText = scansBuffer.length;
+    document.getElementById('count-total').innerText = historyLog.length;
 }
 
-function removeScan(index) {
-    Swal.fire({
-        title: 'Retirer ce produit ?',
-        text: scansBuffer[index].code,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#e93a35',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Oui, retirer',
-        cancelButtonText: 'Annuler'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            scansBuffer.splice(index, 1);
-            updateTable();
-            inputScan.focus();
-        }
-    });
+// --- TOAST ---
+function showToastSuccess() {
+    toast.classList.add('show');
+    setTimeout(function() {
+        toast.classList.remove('show');
+    }, 2000);
 }
 
-function logoutConfirm() {
-    if(scansBuffer.length > 0) {
-        Swal.fire({
-            title: 'Attention',
-            text: "Vous avez des scans non enregistrés. Quitter effacera tout.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e93a35',
-            confirmButtonText: 'Quitter sans sauvegarder'
-        }).then((result) => {
-            if (result.isConfirmed) resetApp();
-        });
-    } else {
-        resetApp();
-    }
+// --- MODALE DECONNEXION ---
+function showLogoutModal() {
+    logoutBackdrop.classList.add('show');
+    logoutModal.classList.add('show');
 }
 
-function finishInventory() {
-    if (scansBuffer.length === 0) {
-        Swal.fire({ 
-            icon: 'info', 
-            title: 'Liste vide', 
-            text: 'Scannez des produits avant de valider.', 
-            confirmButtonColor: '#e93a35' 
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Confirmer l\'envoi ?',
-        text: `${scansBuffer.length} références prêtes à être enregistrées.`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#e93a35',
-        confirmButtonText: 'Envoyer maintenant',
-        cancelButtonText: 'Attendre'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            sendData();
-        }
-    });
+function hideLogoutModal() {
+    logoutBackdrop.classList.remove('show');
+    logoutModal.classList.remove('show');
 }
 
-function sendData() {
-    Swal.fire({
-        title: 'Envoi en cours...',
-        didOpen: () => { Swal.showLoading() }
-    });
-
-    fetch('api.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user: currentUser, scans: scansBuffer })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Parfait !',
-                text: 'Inventaire enregistré.',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                resetApp();
-            });
-        } else {
-            Swal.fire({ 
-                icon: 'error', 
-                title: 'Oups...', 
-                text: data.message 
-            });
-        }
-    })
-    .catch(err => {
-        Swal.fire({ 
-            icon: 'error', 
-            title: 'Erreur réseau', 
-            text: err 
-        });
-    });
+function confirmLogout() {
+    hideLogoutModal();
+    resetApp();
 }
 
+// --- LOGOUT ---
 function resetApp() {
     currentUser = "";
     currentScan = "";
-    scansBuffer = [];
-    updateTable();
+    historyLog = [];
+    renderTable();
     
     document.getElementById('nav-user-badge').classList.add('hidden');
     document.getElementById('btn-logout').classList.add('hidden');

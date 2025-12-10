@@ -4,57 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaire TGCF 2025</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-    <link rel="manifest" href="favicon/site.webmanifest">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Meta Tags pour mode plein écran -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
+    <link href="assets/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body class="bg-body-tertiary">
 
 <nav class="navbar navbar-custom sticky-top">
     <div class="container">
-        <span class="logo-text">INVENTAIRE TGCF 2025</span>
+        <span class="logo-text">INVENTAIRE TGCF</span>
         <div class="d-flex align-items-center gap-3">
-            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
-                🌙
-            </button>
-            <span id="nav-user-badge" class="user-badge hidden">
-                <span id="nav-username"></span>
-            </span>
-            <button id="btn-logout" onclick="logoutConfirm()" class="logout-btn hidden">
-                Quitter
-            </button>
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            <span id="nav-user-badge" class="user-badge hidden"><span id="nav-username"></span></span>
+            <button id="btn-logout" onclick="showLogoutModal()" class="logout-btn hidden">Sortir</button>
         </div>
     </div>
 </nav>
 
+<div id="custom-toast" class="custom-toast">Votre code-barre à bien été enregistrée.</div>
+
 <div id="screen-login" class="login-container">
     <div class="login-card">
-        <h2 class="login-title">Bienvenue</h2>
-        <p class="login-subtitle">Scannez votre badge utilisateur pour commencer</p>
-        <input type="text" id="input-user" class="form-control input-modern" placeholder="U..." autofocus autocomplete="off">
-        <div id="login-error" class="text-danger mt-3 text-center small hidden">
-            Badge non reconnu
+        <h2 class="login-title mb-1">Bienvenue</h2>
+        <p class="login-subtitle mb-4">Scannez badge utilisateur</p>
+        
+        <div class="input-group-custom">
+            <input type="text" id="input-user" class="form-control input-modern" placeholder="Scannez badge..." autofocus autocomplete="off">
+            <button class="btn-input-ok" onclick="triggerLogin()">OK</button>
         </div>
+        
+        <div id="login-error" class="text-danger mt-3 text-center small hidden fw-bold">Badge non reconnu</div>
     </div>
 </div>
 
-<div id="screen-inventory" class="container py-4 hidden">
-    <div class="row g-4">
+<div id="screen-inventory" class="container py-3 hidden">
+    <div class="row g-3">
         <div class="col-12">
             <div class="scan-card">
-                <div class="scan-label">Scanner un produit</div>
-                <input type="text" id="input-scan" class="scan-input" placeholder="Code barre..." autocomplete="off">
+                <div class="scan-label">SCANNER UN PRODUIT</div>
+                <div class="input-group-custom">
+                    <input type="text" id="input-scan" class="form-control input-modern scan-input" placeholder="Code barre..." autofocus autocomplete="off">
+                    <button class="btn-input-ok" onclick="triggerScan()">OK</button>
+                </div>
             </div>
         </div>
 
         <div class="col-12">
             <div class="products-card">
                 <div class="products-header">
-                    <h5 class="products-title">Produits scannés</h5>
+                    <h5 class="products-title">Historique des scans</h5>
                     <span class="count-badge"><span id="count-total">0</span></span>
                 </div>
                 
@@ -62,52 +67,75 @@
                     <table class="table table-modern">
                         <thead>
                             <tr>
-                                <th>Code produit</th>
-                                <th class="text-center">Quantité</th>
-                                <th class="text-center">Action</th>
+                                <th>Produit</th>
+                                <th class="text-end">Qté</th>
                             </tr>
                         </thead>
                         <tbody id="scan-list"></tbody>
                     </table>
                     <div id="empty-state" class="empty-state">
-                        <div class="empty-icon">📦</div>
-                        <div>Aucun produit scanné</div>
+                        <div class="empty-icon" style="font-size: 2rem;">🕒</div>
+                        <div>En attente de scan...</div>
                     </div>
                 </div>
-
-                <button onclick="finishInventory()" class="validate-btn">
-                    VALIDER L'INVENTAIRE
-                </button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade modal-qty" id="modalQty" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<!-- Modale Quantité (avec backdrop Bootstrap) -->
+<div class="modal fade" id="modalQty" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
-            <div class="modal-body p-4">
+            <div class="modal-body p-4 text-center">
                 <div class="modal-qty-label">Quantité pour</div>
-                <div class="modal-qty-code" id="modal-code-display"></div>
+                <div class="modal-qty-code text-break" id="modal-code-display"></div>
                 
                 <div class="qty-control">
                     <button class="qty-btn" type="button" onclick="adjustQty(-1)">−</button>
-                    <input type="number" id="input-qty" class="form-control qty-input" value="1" min="1">
+                    <input type="tel" id="input-qty" class="form-control qty-input" value="1">
                     <button class="qty-btn" type="button" onclick="adjustQty(1)">+</button>
                 </div>
 
-                <div class="d-flex gap-2">
+                <div class="modal-actions">
                     <button type="button" onclick="cancelQty()" class="cancel-btn">ANNULER</button>
-                    <button type="button" onclick="confirmQty()" class="add-btn">AJOUTER</button>
+                    <button type="button" onclick="confirmAndSend()" class="add-btn">ENREGISTRER</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="script.js"></script>
+<!-- Modale Déconnexion (personnalisée) -->
+<div id="modal-logout-backdrop" class="modal-backdrop-custom" onclick="hideLogoutModal()"></div>
+<div id="modal-logout" class="modal-custom">
+    <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+            <div class="modal-qty-label">Confirmation</div>
+            <div class="modal-logout-text">Voulez-vous changer d'utilisateur ?</div>
+            
+            <div class="modal-actions">
+                <button type="button" onclick="hideLogoutModal()" class="cancel-btn">ANNULER</button>
+                <button type="button" onclick="confirmLogout()" class="confirm-btn">CONFIRMER</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="assets/bootstrap.bundle.min.js"></script>
+<script src="script.js?v=7"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker enregistré avec succès: ', registration.scope);
+                })
+                .catch(err => {
+                    console.log('Echec enregistrement ServiceWorker: ', err);
+                });
+        });
+    }
+</script>
 </body>
 </html>
