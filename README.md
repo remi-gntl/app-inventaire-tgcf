@@ -99,10 +99,11 @@ L’application est déployée via **Docker**, intégrée à l’architecture mu
 
 ---
 
-## 📩 Contact 
+## 📩 Contact
 
-📧 [rgentil@thegillcorp.fr](mailto:rgentil@thegillcorp.fr) 
+📧 [rgentil@thegillcorp.fr](mailto:rgentil@thegillcorp.fr)  
 🔗 [LinkedIn](https://www.linkedin.com/in/remi-gentil) • [GitHub](https://github.com/remi-gntl)
+
 
 ---
 
