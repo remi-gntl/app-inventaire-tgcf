@@ -28,7 +28,7 @@ Connexion utilisateur via scan de badge personnel (format `U...`).
 🌗 **Mode Sombre (Dark Mode)**  
 Interface adaptative pour le confort visuel et l’économie de batterie.
 
----
+---   
 
 ## 🛠️ Technologies utilisées
 
