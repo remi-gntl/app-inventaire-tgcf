@@ -13,7 +13,7 @@
     
     <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
     <link href="assets/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="bg-body-tertiary">
 
@@ -28,7 +28,7 @@
     </div>
 </nav>
 
-<div id="custom-toast" class="custom-toast">Votre code-barre à bien été enregistrée.</div>
+<div id="custom-toast" class="custom-toast">Votre code-barre a bien été enregistré.</div>
 
 <div id="screen-login" class="login-container">
     <div class="login-card">
@@ -91,22 +91,24 @@
                 <div class="modal-qty-label">Quantité pour</div>
                 <div class="modal-qty-code text-break" id="modal-code-display"></div>
                 
-                <div class="qty-control">
-                    <button class="qty-btn" type="button" onclick="adjustQty(-1)">−</button>
-                    <input type="tel" id="input-qty" class="form-control qty-input" value="1">
-                    <button class="qty-btn" type="button" onclick="adjustQty(1)">+</button>
+                <div class="mb-3">
+                    <input type="tel" id="input-qty" class="form-control qty-input-large" placeholder="0" autocomplete="off">
+                </div>
+                
+                <div id="qty-error" class="text-danger fw-bold mb-3 hidden" style="font-size: 0.9rem;">
+                    ⚠️ Quantité invalide (≥ 1 requis)
                 </div>
 
                 <div class="modal-actions">
                     <button type="button" onclick="cancelQty()" class="cancel-btn">ANNULER</button>
-                    <button type="button" onclick="confirmAndSend()" class="add-btn">ENREGISTRER</button>
+                    <button type="button" onclick="confirmAndSend()" class="add-btn">VALIDER</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modale Déconnexion (personnalisée) -->
+<!-- Modale Déconnexion -->
 <div id="modal-logout-backdrop" class="modal-backdrop-custom" onclick="hideLogoutModal()"></div>
 <div id="modal-logout" class="modal-custom">
     <div class="modal-content">
@@ -123,7 +125,7 @@
 </div>
 
 <script src="assets/bootstrap.bundle.min.js"></script>
-<script src="script.js?v=7"></script>
+<script src="script.js?v=9"></script>
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

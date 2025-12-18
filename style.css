@@ -278,48 +278,27 @@ body {
     word-break: break-all; 
 }
 
-/* Contrôles Quantité */
-.qty-control { 
-    display: flex; 
-    gap: 10px; 
-    margin-bottom: 1.5rem; 
-}
 
-.qty-btn {
-    width: 60px; 
-    height: 60px;
-    border-radius: var(--radius-md); 
-    border: 2px solid rgba(0,0,0,0.1);
-    background: white; 
-    font-size: 2rem; 
-    font-weight: 700;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer;
-}
-
-.qty-btn:active { background: #eee; }
-
-.qty-input {
-    flex: 1; 
-    border: 2px solid rgba(0,0,0,0.1); 
+.qty-input-large {
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 15px;
+    border: 2px solid #ddd;
     border-radius: var(--radius-md);
-    text-align: center; 
-    font-size: 2rem; 
-    font-weight: 700; 
-    padding: 0;
+    color: #333;
 }
 
-.qty-input:focus { 
-    border-color: var(--main-red); 
-    outline: none; 
+.qty-input-large:focus {
+    border-color: var(--main-red);
+    outline: none;
+    box-shadow: 0 0 0 4px var(--main-red-light);
 }
 
-[data-bs-theme="dark"] .qty-btn, 
-[data-bs-theme="dark"] .qty-input {
-    background: #2b2b30; 
-    border-color: rgba(255,255,255,0.1); 
+[data-bs-theme="dark"] .qty-input-large {
+    background: #2b2b30;
+    border-color: rgba(255,255,255,0.1);
     color: white;
 }
 
@@ -403,3 +382,4 @@ body {
 
 /* UTILS */
 .hidden { display: none !important; }
+

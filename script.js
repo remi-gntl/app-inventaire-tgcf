@@ -1,3 +1,11 @@
+document.addEventListener('DOMContentLoaded', function() {
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(function(error) {
+            console.log("Orientation lock failed: " + error);
+        });
+    }
+});
+
 // --- VARIABLES ---
 let currentUser = "";
 let currentScan = "";
@@ -11,13 +19,13 @@ const inputQty = document.getElementById('input-qty');
 const scanList = document.getElementById('scan-list');
 const emptyState = document.getElementById('empty-state');
 const toast = document.getElementById('custom-toast');
+const qtyError = document.getElementById('qty-error');
 
 // Modales personnalisées
 const logoutModal = document.getElementById('modal-logout');
 const logoutBackdrop = document.getElementById('modal-logout-backdrop');
 
 // --- THEME ---
-// Stockage en variable JS au lieu de localStorage pour compatibilité
 let currentTheme = 'light';
 try {
     const stored = localStorage.getItem('theme');
@@ -80,7 +88,6 @@ function loginSuccess(user) {
 }
 
 // --- INVENTAIRE ---
-// Gestion Touche Entrée
 inputScan.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') triggerScan();
 });
@@ -96,31 +103,51 @@ function triggerScan() {
 
 function openQtyModal() {
     document.getElementById('modal-code-display').innerText = currentScan;
-    inputQty.value = "1"; 
+    inputQty.value = ""; // Champ VIDE
+    
+    // Cache l'erreur à l'ouverture
+    if (qtyError) {
+        qtyError.classList.add('hidden');
+    }
+    
     qtyModal.show();
-    setTimeout(function() {
+    setTimeout(() => {
         inputQty.focus();
-        inputQty.select();
     }, 400); 
-}
-
-function adjustQty(delta) {
-    let val = parseInt(inputQty.value) || 0;
-    val += delta;
-    if(val < 1) val = 1;
-    inputQty.value = val;
-    inputQty.focus();
 }
 
 inputQty.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') confirmAndSend();
 });
 
-// --- ENVOI DIRECT ---
+// --- ENVOI AVEC VALIDATION STRICTE ---
 function confirmAndSend() {
-    let qty = parseInt(inputQty.value);
-    if (isNaN(qty) || qty < 1) return; 
+    let val = inputQty.value.trim();
+    
+    // VALIDATION STRICTE
+    if (val === "" || val === "0") {
+        if (qtyError) {
+            qtyError.classList.remove('hidden');
+        }
+        inputQty.focus();
+        return;
+    }
+    
+    let qty = parseInt(val);
+    
+    if (isNaN(qty) || qty < 1) {
+        // Affiche l'erreur
+        if (qtyError) {
+            qtyError.classList.remove('hidden');
+        }
+        inputQty.focus();
+        return;
+    }
 
+    if (qtyError) {
+        qtyError.classList.add('hidden');
+    }
+    
     qtyModal.hide();
 
     const dataToSend = {
@@ -161,8 +188,14 @@ function confirmAndSend() {
 }
 
 function cancelQty() {
-    inputQty.value = "1";
+    inputQty.value = "";
     currentScan = ""; 
+    
+    // Cache l'erreur si elle était affichée
+    if (qtyError) {
+        qtyError.classList.add('hidden');
+    }
+    
     qtyModal.hide();
     setTimeout(function() {
         inputScan.value = ""; 
@@ -174,7 +207,6 @@ function cancelQty() {
 function addToHistory(code, qty) {
     historyLog.unshift({ code: code, qty: qty });
     
-    // On garde que les 50 derniers pour pas surcharger le DOM
     if (historyLog.length > 50) historyLog.pop();
 
     renderTable();
